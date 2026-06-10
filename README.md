@@ -547,3 +547,425 @@ Topics:
 Goal:
 
 Create real database tables and start storing healthcare data using Django ORM.
+
+# Django Learning Journey - Day 3
+
+## Objective
+
+Learn how Django works with databases using Models, Migrations, ORM, and the Django Admin Panel.
+
+---
+
+# Topics Covered
+
+- Django Models
+- SQLite Database
+- Migrations
+- Django ORM
+- QuerySets
+- Admin Panel
+- Superuser Creation
+- Dynamic Data Rendering
+- Admin Customization
+
+---
+
+# Concepts Learned
+
+## 1. Models
+
+Created the first Django model:
+
+```python
+from django.db import models
+
+class Patient(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.IntegerField()
+    disease = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+```
+
+Purpose:
+
+- Defines database structure using Python classes.
+- Django automatically converts models into database tables.
+
+---
+
+## 2. Migrations
+
+Generated migration files:
+
+```bash
+python manage.py makemigrations
+```
+
+Purpose:
+
+- Creates a blueprint of database changes.
+
+Applied migrations:
+
+```bash
+python manage.py migrate
+```
+
+Purpose:
+
+- Applies migration changes to the database.
+
+---
+
+## Migration Workflow
+
+```text
+Model
+  ↓
+makemigrations
+  ↓
+Migration File
+  ↓
+migrate
+  ↓
+Database Table
+```
+
+---
+
+# Database
+
+Default SQLite database used:
+
+```text
+db.sqlite3
+```
+
+Patient table created automatically from the model.
+
+---
+
+# Django Admin Panel
+
+Registered Patient model:
+
+```python
+from django.contrib import admin
+from .models import Patient
+
+admin.site.register(Patient)
+```
+
+Created superuser:
+
+```bash
+python manage.py createsuperuser
+```
+
+Accessed:
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
+Added patient records through the admin interface.
+
+---
+
+# ORM Queries
+
+Imported model:
+
+```python
+from core.models import Patient
+```
+
+---
+
+## Get All Patients
+
+```python
+Patient.objects.all()
+```
+
+SQL Equivalent:
+
+```sql
+SELECT * FROM patient;
+```
+
+---
+
+## Count Patients
+
+```python
+Patient.objects.count()
+```
+
+SQL Equivalent:
+
+```sql
+SELECT COUNT(*) FROM patient;
+```
+
+---
+
+## First Patient
+
+```python
+Patient.objects.first()
+```
+
+SQL Equivalent:
+
+```sql
+SELECT * FROM patient
+LIMIT 1;
+```
+
+---
+
+## Filter Patients
+
+```python
+Patient.objects.filter(age=25)
+```
+
+SQL Equivalent:
+
+```sql
+SELECT *
+FROM patient
+WHERE age = 25;
+```
+
+---
+
+## Greater Than
+
+```python
+Patient.objects.filter(age__gt=25)
+```
+
+---
+
+## Greater Than or Equal
+
+```python
+Patient.objects.filter(age__gte=25)
+```
+
+---
+
+## Less Than
+
+```python
+Patient.objects.filter(age__lt=25)
+```
+
+---
+
+## Contains
+
+```python
+Patient.objects.filter(name__icontains="jo")
+```
+
+---
+
+# Dynamic Data Rendering
+
+## View
+
+```python
+from django.shortcuts import render
+from .models import Patient
+
+def patient_list(request):
+    patients = Patient.objects.all()
+
+    return render(
+        request,
+        "patients.html",
+        {"patients": patients}
+    )
+```
+
+---
+
+## Template
+
+```html
+{% for patient in patients %}
+    <li>
+        {{ patient.name }}
+        {{ patient.age }}
+        {{ patient.disease }}
+    </li>
+{% endfor %}
+```
+
+---
+
+# Data Flow
+
+```text
+Database
+   ↓
+Model
+   ↓
+ORM Query
+   ↓
+View
+   ↓
+Template
+   ↓
+Browser
+```
+
+---
+
+# Admin Customization
+
+## list_display
+
+```python
+list_display = (
+    "name",
+    "age",
+    "disease"
+)
+```
+
+Purpose:
+
+- Shows model fields in table format.
+
+---
+
+## search_fields
+
+```python
+search_fields = (
+    "name",
+    "disease"
+)
+```
+
+Purpose:
+
+- Enables search functionality in admin panel.
+
+---
+
+## list_filter
+
+```python
+list_filter = (
+    "age",
+)
+```
+
+Purpose:
+
+- Adds filtering options in admin panel.
+
+---
+
+# Features Built
+
+## Patient Model
+
+Stores:
+
+- Name
+- Age
+- Disease
+
+---
+
+## Patient Admin Panel
+
+Supports:
+
+- Add Patient
+- Edit Patient
+- Delete Patient
+- Search Patient
+- Filter Patient
+
+---
+
+## Patient Records Page
+
+Displays patient records dynamically from database.
+
+---
+
+# Key Learnings
+
+- Models define database structure.
+- Migrations manage schema changes.
+- ORM converts Python queries into SQL.
+- Admin Panel provides instant management UI.
+- Views can send database data to templates.
+- Templates can display dynamic content.
+- Django dramatically reduces backend development time.
+
+---
+
+# Skills Acquired
+
+✅ Create Models
+
+✅ Create Database Tables
+
+✅ Generate and Apply Migrations
+
+✅ Use SQLite Database
+
+✅ Create Superuser
+
+✅ Use Django Admin
+
+✅ Perform ORM Queries
+
+✅ Filter Data
+
+✅ Display Dynamic Data
+
+✅ Customize Admin Panel
+
+---
+
+# Day 3 Outcome
+
+Successfully built a database-driven Hospital Management application with:
+
+- Patient Model
+- SQLite Database
+- Django Admin Panel
+- ORM Queries
+- Dynamic Patient List Page
+- Search and Filter Functionality
+
+---
+
+# Next Step
+
+## Day 4 - Advanced Django Admin
+
+Topics:
+
+- Admin Configuration
+- Ordering
+- Read-only Fields
+- Fieldsets
+- Advanced Search
+- Productivity Features
+
+Goal:
+
+Master Django Admin customization and build professional admin dashboards.

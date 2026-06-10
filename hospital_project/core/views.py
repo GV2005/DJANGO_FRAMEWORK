@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from .models import Patient
 
 def home(request):
     return render(request,"home.html")
@@ -14,3 +15,9 @@ def services(request):
 
 def doctors(request):
     return render(request,'doctors.html')
+
+def patient_list(request):
+    patients=Patient.objects.all()
+
+    return render(request,'patient.html',
+                  {"patients":patients})
