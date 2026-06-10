@@ -1,10 +1,16 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 
 def home(request):
-    return HttpResponse("Welcome to the Hospital Management system")
+    return render(request,"home.html")
 
 def about(request):
-    return HttpResponse("welcome to the about page of the hospital")
+    return render(request,"about.html")
 
 def contact(request):
-    return HttpResponse("cotact us with abc@gmail.com")
+    return render(request,"contact.html")
+def services(request):
+    return render(request,"services.html")
+
+def doctors(request):
+    return render(request,'doctors.html')
