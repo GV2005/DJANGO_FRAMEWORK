@@ -31,6 +31,9 @@ def create_patient(request):
         if form.is_valid():
             form.save()
 
+        if not form.is_valid():
+            print(form.errors)
+
             return redirect("patient")
         
     else:

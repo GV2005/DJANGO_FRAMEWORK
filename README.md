@@ -1415,3 +1415,535 @@ Topics:
 Goal:
 
 Build secure and professional Django forms with proper validation.
+
+# Django Learning Journey - Day 6
+
+## Objective
+
+Learn Django Form Validation to ensure only valid and meaningful data is stored in the database.
+
+---
+
+# Topics Covered
+
+* Django ModelForms
+* Field-Level Validation
+* Form-Level Validation
+* ValidationError
+* Required Fields
+* Error Handling
+* Form Persistence
+* cleaned_data
+* form.is_valid()
+* Form Validation Workflow
+
+---
+
+# Concepts Learned
+
+## 1. ModelForm
+
+Created:
+
+```python
+from django import forms
+from .models import Patient
+
+class PatientForm(forms.ModelForm):
+
+    class Meta:
+        model = Patient
+        fields = [
+            "name",
+            "age",
+            "disease"
+        ]
+```
+
+### Purpose
+
+* Automatically generates form fields from models.
+* Provides built-in validation.
+* Reduces repetitive form code.
+* Supports direct database saving.
+
+---
+
+# Field-Level Validation
+
+## Validate Age
+
+```python
+def clean_age(self):
+
+    age = self.cleaned_data["age"]
+
+    if age < 0:
+
+        raise forms.ValidationError(
+            "Age cannot be negative"
+        )
+
+    return age
+```
+
+### Purpose
+
+* Prevent negative ages.
+* Ensure realistic patient records.
+
+---
+
+## Validate Name
+
+```python
+def clean_name(self):
+
+    name = self.cleaned_data["name"]
+
+    if len(name) < 3:
+
+        raise forms.ValidationError(
+            "Name is too short"
+        )
+
+    return name
+```
+
+### Purpose
+
+* Prevent invalid patient names.
+* Enforce minimum character length.
+
+---
+
+## Validate Disease
+
+```python
+def clean_disease(self):
+
+    disease = self.cleaned_data["disease"]
+
+    if len(disease) < 4:
+
+        raise forms.ValidationError(
+            "Disease name is too short"
+        )
+
+    return disease
+```
+
+### Purpose
+
+* Prevent meaningless disease values.
+* Improve data quality.
+
+---
+
+# Form-Level Validation
+
+Created:
+
+```python
+def clean(self):
+
+    cleaned_data = super().clean()
+
+    age = cleaned_data.get("age")
+    disease = cleaned_data.get("disease")
+
+    if age is not None and disease:
+
+        if age < 35 and disease.lower() == "heart attack":
+
+            raise forms.ValidationError(
+                "Patient is too young to undergo heart surgery"
+            )
+
+    return cleaned_data
+```
+
+### Purpose
+
+* Validate multiple fields together.
+* Handle business rules.
+* Enforce logical relationships between data.
+
+---
+
+# Difference Between Validation Types
+
+## Field Validation
+
+```python
+clean_age()
+clean_name()
+clean_disease()
+```
+
+Checks:
+
+```text
+One field at a time
+```
+
+Examples:
+
+* Negative age
+* Short name
+* Short disease name
+
+---
+
+## Form Validation
+
+```python
+clean()
+```
+
+Checks:
+
+```text
+Multiple fields together
+```
+
+Examples:
+
+* Age + Disease
+* Name + Disease
+* Age + Treatment
+
+---
+
+# Validation Workflow
+
+```text
+User Submits Form
+        ↓
+PatientForm(request.POST)
+        ↓
+clean_name()
+        ↓
+clean_age()
+        ↓
+clean_disease()
+        ↓
+clean()
+        ↓
+form.is_valid()
+        ↓
+True → Save Data
+False → Show Errors
+```
+
+---
+
+# Validation Errors Tested
+
+## Test 1
+
+Input:
+
+```text
+Name = ab
+Age = 25
+Disease = fever
+```
+
+Result:
+
+```text
+Name is too short
+```
+
+---
+
+## Test 2
+
+Input:
+
+```text
+Name = Giri
+Age = -5
+Disease = fever
+```
+
+Result:
+
+```text
+Age cannot be negative
+```
+
+---
+
+## Test 3
+
+Input:
+
+```text
+Name = Giri
+Age = 25
+Disease = ab
+```
+
+Result:
+
+```text
+Disease name is too short
+```
+
+---
+
+## Test 4
+
+Input:
+
+```text
+Name = Anbu
+Age = 22
+Disease = Heart Attack
+```
+
+Result:
+
+```text
+Patient is too young to undergo heart surgery
+```
+
+---
+
+# Required Fields
+
+Observed browser validation:
+
+```text
+Please fill out this field.
+```
+
+### Understanding
+
+Two validation layers exist:
+
+### Browser Validation
+
+```text
+HTML Input Validation
+```
+
+Runs before request reaches Django.
+
+---
+
+### Django Validation
+
+```text
+ModelForm Validation
+```
+
+Runs after form submission.
+
+---
+
+# cleaned_data
+
+Used:
+
+```python
+cleaned_data = super().clean()
+```
+
+Access values:
+
+```python
+age = cleaned_data.get("age")
+disease = cleaned_data.get("disease")
+```
+
+### Purpose
+
+* Retrieve validated form values.
+* Use values safely in validation logic.
+
+---
+
+# Bug Encountered
+
+## Error
+
+```text
+TypeError:
+'<' not supported between instances of
+'NoneType' and 'int'
+```
+
+Cause:
+
+```python
+age = cleaned_data.get("age")
+```
+
+returned:
+
+```python
+None
+```
+
+because previous validation failed.
+
+Incorrect:
+
+```python
+if age < 35:
+```
+
+---
+
+## Fix
+
+```python
+if age is not None and disease:
+```
+
+### Lesson
+
+Always check for None when using cleaned_data inside clean().
+
+---
+
+# Form Persistence
+
+Observed:
+
+```text
+Validation failed
+```
+
+but entered values remained visible.
+
+Example:
+
+```text
+Name: Giri
+Disease: Anger Issues
+```
+
+remained on screen.
+
+### Purpose
+
+Improves user experience.
+
+Users only correct invalid fields instead of re-entering everything.
+
+---
+
+# Important Django Methods
+
+## form.is_valid()
+
+```python
+if form.is_valid():
+```
+
+Purpose:
+
+* Executes all validations.
+* Returns True or False.
+
+---
+
+## form.save()
+
+```python
+form.save()
+```
+
+Purpose:
+
+* Saves validated data.
+* Creates or updates database records.
+
+---
+
+# Skills Acquired
+
+✅ ModelForms
+
+✅ Field-Level Validation
+
+✅ Form-Level Validation
+
+✅ ValidationError
+
+✅ Required Fields
+
+✅ cleaned_data
+
+✅ form.is_valid()
+
+✅ Error Handling
+
+✅ Data Quality Enforcement
+
+✅ Business Rule Validation
+
+✅ Form Persistence
+
+✅ Validation Debugging
+
+---
+
+# Project Status
+
+Hospital Management System now supports:
+
+* CRUD Operations
+* Database Integration
+* Django Admin
+* ORM Queries
+* Dynamic Templates
+* Custom Form Validation
+
+---
+
+# Day 6 Outcome
+
+Successfully implemented professional Django form validation.
+
+The application now prevents invalid, incomplete, and logically incorrect patient records from being stored in the database.
+
+---
+
+# Current Roadmap Progress
+
+✅ Day 1 - Django Foundation
+
+✅ Day 2 - Templates & Views
+
+✅ Day 3 - Models & ORM
+
+✅ Day 4 - Django Admin
+
+✅ Day 5 - CRUD Operations
+
+✅ Day 6 - Forms & Validation
+
+---
+
+# Next Step
+
+## Day 7 - Authentication
+
+Topics:
+
+* User Registration
+* Login
+* Logout
+* Authentication System
+* Protected Pages
+* Access Control
+
+Goal:
+
+Build a secure Hospital Management System with user accounts and restricted access.
+
