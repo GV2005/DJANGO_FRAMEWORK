@@ -1947,3 +1947,297 @@ Goal:
 
 Build a secure Hospital Management System with user accounts and restricted access.
 
+# Day 7 - Authentication & Authorization
+
+## Objective
+
+Learn Django Authentication and build a secure login system for the Hospital Management application.
+
+---
+
+## Topics Covered
+
+* Django User Model
+* User Registration
+* User Login
+* User Logout
+* Sessions
+* Authentication
+* Authorization
+* Protected Pages
+* login_required Decorator
+
+---
+
+## User Registration
+
+Created a registration page using Django's built-in authentication system.
+
+### Form Used
+
+```python
+from django.contrib.auth.forms import UserCreationForm
+```
+
+Created:
+
+```python
+class RegisterForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "password1",
+            "password2"
+        ]
+```
+
+### Key Learning
+
+* Django already provides a User model.
+* No need to create a separate Registration model.
+* Password confirmation is handled automatically.
+* Username uniqueness validation is built-in.
+
+---
+
+## Registration Flow
+
+```text
+User Registration Form
+        ↓
+RegisterForm
+        ↓
+form.is_valid()
+        ↓
+form.save()
+        ↓
+New User Created
+        ↓
+auth_user Table
+```
+
+---
+
+## User Login
+
+Created a login page using Django Authentication.
+
+### Form Used
+
+```python
+from django.contrib.auth.forms import AuthenticationForm
+```
+
+Created:
+
+```python
+class LoginForm(AuthenticationForm):
+    pass
+```
+
+### Login Process
+
+```python
+authenticate()
+```
+
+Purpose:
+
+* Verifies username.
+* Verifies password.
+* Returns User object if valid.
+* Returns None if invalid.
+
+---
+
+## Authentication Flow
+
+```text
+Username + Password
+        ↓
+AuthenticationForm
+        ↓
+authenticate()
+        ↓
+User Object or None
+        ↓
+login()
+        ↓
+Session Created
+```
+
+---
+
+## Difference Between authenticate() and login()
+
+### authenticate()
+
+```python
+user = authenticate(
+    username=username,
+    password=password
+)
+```
+
+Purpose:
+
+* Checks credentials.
+* Does NOT log user in.
+* Returns User object or None.
+
+---
+
+### login()
+
+```python
+login(request, user)
+```
+
+Purpose:
+
+* Creates user session.
+* Marks user as authenticated.
+* Allows access to protected pages.
+
+---
+
+## User Logout
+
+Implemented logout functionality.
+
+### Function Used
+
+```python
+logout(request)
+```
+
+Purpose:
+
+* Destroys active session.
+* Does NOT delete user account.
+* User becomes AnonymousUser.
+
+---
+
+## Logout Flow
+
+```text
+Logged In User
+        ↓
+logout()
+        ↓
+Session Removed
+        ↓
+AnonymousUser
+```
+
+---
+
+## Protected Pages
+
+Used:
+
+```python
+from django.contrib.auth.decorators import login_required
+```
+
+Example:
+
+```python
+@login_required
+def create_patient(request):
+```
+
+Purpose:
+
+* Restricts access.
+* Redirects anonymous users to login page.
+
+---
+
+## Settings Configuration
+
+Added:
+
+```python
+LOGIN_URL = "login"
+```
+
+Purpose:
+
+* Defines default login redirect page.
+* Used automatically by login_required.
+
+---
+
+## Session Understanding
+
+Learned:
+
+```text
+Login
+    ↓
+Session Created
+
+Logout
+    ↓
+Session Destroyed
+```
+
+Closing a browser tab does not automatically log out a user because the session cookie remains available while the browser is running.
+
+---
+
+## Skills Acquired
+
+✅ User Registration
+
+✅ User Login
+
+✅ User Logout
+
+✅ Authentication
+
+✅ Authorization
+
+✅ Sessions
+
+✅ User Model
+
+✅ AuthenticationForm
+
+✅ UserCreationForm
+
+✅ authenticate()
+
+✅ login()
+
+✅ logout()
+
+✅ login_required
+
+✅ Protected Routes
+
+---
+
+## Project Status
+
+Hospital Management System now supports:
+
+* Patient CRUD Operations
+* Form Validation
+* User Registration
+* User Login
+* User Logout
+* Protected Pages
+* Access Control
+
+---
+
+## Day 7 Outcome
+
+Successfully implemented a complete authentication system using Django's built-in User model and authentication framework.
+
+The Hospital Management System now supports secure access control and user-based authentication.

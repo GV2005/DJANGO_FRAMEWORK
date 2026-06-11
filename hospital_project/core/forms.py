@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from django.contrib.auth.models import User
 from .models import Patient
 
 class PatientForm(forms.ModelForm):
@@ -32,3 +34,18 @@ class PatientForm(forms.ModelForm):
         if len(disease)<4:
             raise forms.ValidationError("disease name is too short ")
         return disease
+
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model=User
+        fields=["username",
+                "password1",
+                "password2"]
+        
+class LoginForm(AuthenticationForm):
+    class Meta:
+        model=User
+        fields=["username",
+                "password"]
+        
