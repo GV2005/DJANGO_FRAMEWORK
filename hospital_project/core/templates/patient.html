@@ -16,6 +16,18 @@
         <td>{{ patient.name }}</td>
         <td>{{ patient.age }}</td>
         <td>{{ patient.disease }}</td>
+
+        <td>
+        <a href="{% url 'update_patient' patient.id %}">
+            Update
+        </a>
+        </td>
+        <td>
+        <a href="{% url 'delete_patient' patient.id %}">
+            Delete
+        </a>
+        </td>
+
     </tr>
     {% endfor %}
 

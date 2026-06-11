@@ -969,3 +969,449 @@ Topics:
 Goal:
 
 Master Django Admin customization and build professional admin dashboards.
+
+# Django Learning Journey - Day 5
+
+## Objective
+
+Learn and implement complete CRUD (Create, Read, Update, Delete) operations in Django using ModelForms, Views, Templates, and ORM.
+
+---
+
+# Topics Covered
+
+* Django ModelForms
+* Create Operation
+* Read Operation
+* Update Operation
+* Delete Operation
+* URL Parameters
+* get_object_or_404()
+* Redirects
+* Form Handling
+* CRUD Workflow
+
+---
+
+# Concepts Learned
+
+## 1. Django ModelForm
+
+Created:
+
+```python
+from django import forms
+from .models import Patient
+
+class PatientForm(forms.ModelForm):
+
+    class Meta:
+        model = Patient
+        fields = [
+            "name",
+            "age",
+            "disease"
+        ]
+```
+
+### Purpose
+
+* Automatically creates form fields from the model.
+* Reduces repetitive code.
+* Provides built-in validation.
+* Allows direct database saving using `form.save()`.
+
+---
+
+# CRUD Operations
+
+## CREATE
+
+### View
+
+```python
+def create_patient(request):
+
+    if request.method == "POST":
+
+        form = PatientForm(request.POST)
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect("patient")
+
+    else:
+
+        form = PatientForm()
+
+    return render(
+        request,
+        "create_patient.html",
+        {"form": form}
+    )
+```
+
+### Features
+
+* User enters patient information.
+* Form validates input.
+* Data saved to database.
+* User redirected to patient list.
+
+---
+
+## READ
+
+### View
+
+```python
+def patient_list(request):
+
+    patients = Patient.objects.all()
+
+    return render(
+        request,
+        "patient.html",
+        {"patients": patients}
+    )
+```
+
+### Features
+
+* Retrieves all patients.
+* Sends data to template.
+* Displays dynamic patient records.
+
+---
+
+## UPDATE
+
+### View
+
+```python
+def update_patient(request, id):
+
+    patient = get_object_or_404(
+        Patient,
+        id=id
+    )
+
+    if request.method == "POST":
+
+        form = PatientForm(
+            request.POST,
+            instance=patient
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect("patient")
+
+    else:
+
+        form = PatientForm(
+            instance=patient
+        )
+
+    return render(
+        request,
+        "create_patient.html",
+        {"form": form}
+    )
+```
+
+### Key Learning
+
+```python
+instance=patient
+```
+
+Purpose:
+
+* Updates existing record.
+* Prevents duplicate entries.
+* Pre-fills form with existing data.
+
+Without:
+
+```python
+instance=patient
+```
+
+Django creates a new record instead of updating.
+
+---
+
+## DELETE
+
+### View
+
+```python
+def delete_patient(request, id):
+
+    patient = get_object_or_404(
+        Patient,
+        id=id
+    )
+
+    patient.delete()
+
+    return redirect("patient")
+```
+
+### Purpose
+
+* Removes selected patient.
+* Updates database.
+* Redirects to patient list.
+
+---
+
+# URL Parameters
+
+Example:
+
+```python
+path(
+    "update/<int:id>/",
+    update_patient,
+    name="update_patient"
+)
+```
+
+### Purpose
+
+Passes selected patient ID to the view.
+
+Example:
+
+```text
+/update/3/
+```
+
+Django extracts:
+
+```python
+id = 3
+```
+
+---
+
+# get_object_or_404()
+
+Example:
+
+```python
+patient = get_object_or_404(
+    Patient,
+    id=id
+)
+```
+
+### Purpose
+
+* Retrieves object safely.
+* Returns 404 page if record does not exist.
+* Prevents application crashes.
+
+---
+
+# Redirects
+
+Example:
+
+```python
+return redirect("patient")
+```
+
+### Purpose
+
+* Redirects user after Create, Update, Delete.
+* Loads fresh patient data.
+* Prevents stale pages.
+
+---
+
+# Patient Management Features
+
+Successfully implemented:
+
+### Create Patient
+
+* Add new patient records.
+
+### View Patients
+
+* Display all patients in a table.
+
+### Update Patient
+
+* Modify existing records.
+
+### Delete Patient
+
+* Remove records permanently.
+
+---
+
+# Data Flow
+
+```text
+User Form
+    ↓
+View
+    ↓
+ModelForm
+    ↓
+Database
+    ↓
+ORM
+    ↓
+Template
+    ↓
+Browser
+```
+
+---
+
+# Bugs Solved During Learning
+
+### Bug 1
+
+```python
+forms
+```
+
+instead of
+
+```python
+form
+```
+
+Result:
+
+* Form fields not displayed.
+
+Fix:
+
+```python
+{"form": form}
+```
+
+---
+
+### Bug 2
+
+```python
+redirect("patients")
+```
+
+instead of
+
+```python
+redirect("patient")
+```
+
+Result:
+
+```text
+NoReverseMatch
+```
+
+Fix:
+
+Use correct URL name.
+
+---
+
+### Bug 3
+
+```python
+get_object_or_404(patient,id=id)
+```
+
+instead of
+
+```python
+get_object_or_404(Patient,id=id)
+```
+
+Result:
+
+```text
+UnboundLocalError
+```
+
+Fix:
+
+Use model class name.
+
+---
+
+# Skills Acquired
+
+✅ ModelForms
+
+✅ Form Validation
+
+✅ Create Operation
+
+✅ Read Operation
+
+✅ Update Operation
+
+✅ Delete Operation
+
+✅ URL Parameters
+
+✅ Redirects
+
+✅ get_object_or_404()
+
+✅ Dynamic CRUD Applications
+
+✅ Debugging Django Errors
+
+---
+
+# Project Status
+
+Hospital Management System now supports:
+
+* Patient Creation
+* Patient Listing
+* Patient Update
+* Patient Deletion
+* Admin Management
+* ORM Integration
+* Dynamic Templates
+
+---
+
+# Day 5 Outcome
+
+Successfully built a complete CRUD-based Hospital Management System using Django.
+
+The application can now perform full database operations through custom web pages without relying on Django Admin.
+
+---
+
+# Next Step
+
+## Day 6 - Django Forms & Validation
+
+Topics:
+
+* Advanced Form Validation
+* Custom Validation Methods
+* Error Handling
+* User Input Validation
+* Form Styling
+
+Goal:
+
+Build secure and professional Django forms with proper validation.
