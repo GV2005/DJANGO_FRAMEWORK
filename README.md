@@ -2241,3 +2241,278 @@ Hospital Management System now supports:
 Successfully implemented a complete authentication system using Django's built-in User model and authentication framework.
 
 The Hospital Management System now supports secure access control and user-based authentication.
+
+# Day 8 - Django Model Relationships
+
+## Objective
+
+Learn and implement Django model relationships using:
+
+* ForeignKey (One-to-Many)
+* OneToOneField (One-to-One)
+* ManyToManyField (Many-to-Many)
+
+using the Hospital Management System project.
+
+---
+
+## ForeignKey Relationship
+
+### Doctor Model
+
+```python
+class Doctor(models.Model):
+    name = models.CharField(max_length=50)
+    age = models.IntegerField()
+    department = models.CharField(max_length=60)
+
+    def __str__(self):
+        return self.name
+```
+
+### Patient Model Update
+
+```python
+doctor = models.ForeignKey(
+    Doctor,
+    on_delete=models.SET_NULL,
+    null=True
+)
+```
+
+### Relationship Type
+
+```text
+One Doctor
+      ↓
+Many Patients
+```
+
+### Key Learning
+
+* ForeignKey is used for One-to-Many relationships.
+* The primary key of the parent table is stored as a foreign key in the child table.
+* Django automatically creates a dropdown in Admin for ForeignKey fields.
+* Related objects can be accessed using ORM relationships.
+
+Example:
+
+```python
+patient.doctor.name
+```
+
+---
+
+## OneToOne Relationship
+
+### Patient Profile Model
+
+```python
+class PatientProfile(models.Model):
+    patient = models.OneToOneField(
+        Patient,
+        on_delete=models.CASCADE
+    )
+
+    blood_group = models.CharField(max_length=5)
+    emergency_contact = models.CharField(max_length=20)
+```
+
+### Relationship Type
+
+```text
+One Patient
+      ↔
+One Patient Profile
+```
+
+### Key Learning
+
+* OneToOneField creates a unique relationship between two models.
+* One patient can have only one profile.
+* One profile belongs to only one patient.
+
+### Reverse Lookup
+
+```python
+patient.patientprofile.blood_group
+```
+
+Output:
+
+```text
+O+
+```
+
+### Important Observation
+
+Django automatically creates reverse relationships using lowercase model names.
+
+Example:
+
+```python
+patient.patientprofile
+```
+
+not
+
+```python
+patient.PatientProfile
+```
+
+---
+
+## ManyToMany Relationship
+
+### Disease Model
+
+```python
+class Disease(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+```
+
+### Patient Model Update
+
+```python
+disease = models.ManyToManyField(
+    Disease
+)
+```
+
+### Relationship Type
+
+```text
+Many Patients
+      ↔
+Many Diseases
+```
+
+### Example
+
+```text
+Patient:
+John
+
+Diseases:
+Diabetes
+Fever
+Hypertension
+```
+
+A disease can belong to many patients, and a patient can have many diseases.
+
+---
+
+## Bridge Table Concept
+
+Learned that Django automatically creates an intermediate table for Many-to-Many relationships.
+
+Example:
+
+```text
+patient
+disease
+patient_disease
+```
+
+The bridge table stores:
+
+```text
+patient_id
+disease_id
+```
+
+This concept is identical to relational database design used in backend systems.
+
+---
+
+## Django Admin Observations
+
+### ForeignKey
+
+Displayed as:
+
+```text
+Dropdown Menu
+```
+
+for selecting doctors.
+
+### ManyToMany
+
+Displayed as:
+
+```text
+Multi-Select Box
+```
+
+for selecting diseases.
+
+Multiple diseases can be selected using:
+
+```text
+CTRL + Click
+```
+
+---
+
+## ORM Queries Practiced
+
+### Forward ForeignKey Lookup
+
+```python
+patient.doctor.name
+```
+
+### Reverse OneToOne Lookup
+
+```python
+patient.patientprofile.blood_group
+```
+
+### ManyToMany Lookup
+
+```python
+patient.disease.all()
+```
+
+Example Output:
+
+```python
+<QuerySet [<Disease: chicken pox>]>
+```
+
+---
+
+## Skills Acquired
+
+✅ ForeignKey Relationships
+
+✅ OneToOne Relationships
+
+✅ ManyToMany Relationships
+
+✅ Database Relationship Design
+
+✅ Bridge/Junction Tables
+
+✅ Reverse ORM Lookups
+
+✅ Django Admin Relationship Handling
+
+✅ Relational Database Thinking
+
+---
+
+## Day 8 Outcome
+
+Successfully implemented all three major Django model relationships inside the Hospital Management System:
+
+* Doctor ↔ Patient (ForeignKey)
+* Patient ↔ PatientProfile (OneToOne)
+* Patient ↔ Disease (ManyToMany)
+
+Gained practical understanding of how Django ORM maps relationships to relational database structures.
