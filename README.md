@@ -2516,3 +2516,365 @@ Successfully implemented all three major Django model relationships inside the H
 * Patient ↔ Disease (ManyToMany)
 
 Gained practical understanding of how Django ORM maps relationships to relational database structures.
+
+# Day 9 - Class Based Views (CBVs)
+
+## Objective
+
+Learn Django Class-Based Views (CBVs) and convert CRUD operations from Function-Based Views (FBVs) to CBVs.
+
+---
+
+## Function-Based Views vs Class-Based Views
+
+### Function-Based View (FBV)
+
+Example:
+
+```python
+def patient_list(request):
+    patients = Patient.objects.all()
+
+    return render(
+        request,
+        "patient.html",
+        {"patients": patients}
+    )
+```
+
+Characteristics:
+
+* Explicit logic.
+* More code.
+* Full control over request handling.
+
+---
+
+### Class-Based View (CBV)
+
+Example:
+
+```python
+class PatientListView(ListView):
+    model = Patient
+```
+
+Characteristics:
+
+* Reusable.
+* Less boilerplate code.
+* Built-in CRUD functionality.
+
+---
+
+## Why CBVs?
+
+Django noticed that most CRUD operations repeat the same patterns:
+
+* Query data
+* Render template
+* Validate forms
+* Save objects
+* Redirect users
+
+CBVs automate these common operations.
+
+---
+
+## as_view()
+
+Used when connecting a Class-Based View to a URL.
+
+Example:
+
+```python
+path(
+    "patients/",
+    PatientListView.as_view(),
+    name="patients"
+)
+```
+
+### Key Learning
+
+* Functions are passed directly.
+* Classes require `.as_view()`.
+
+---
+
+## ListView
+
+### Purpose
+
+Display all records.
+
+Example:
+
+```python
+class PatientListView(ListView):
+    model = Patient
+    template_name = "patient.html"
+    context_object_name = "patients"
+```
+
+### Automatically Performs
+
+```python
+Patient.objects.all()
+```
+
+### Key Learning
+
+* ListView retrieves all objects automatically.
+* Custom context names can be defined using `context_object_name`.
+
+---
+
+## DetailView
+
+### Purpose
+
+Display a single record.
+
+Example:
+
+```python
+class PatientDetailView(DetailView):
+    model = Patient
+    template_name = "patient_detail.html"
+    context_object_name = "patient"
+```
+
+### URL
+
+```python
+path(
+    "patient/<int:pk>/",
+    PatientDetailView.as_view(),
+    name="patient_detail"
+)
+```
+
+### Project Implementation
+
+Patient names in the patient list page were converted into navigation links.
+
+Flow:
+
+```text
+Patient List
+      ↓
+Click Patient Name
+      ↓
+Patient Detail Page
+```
+
+### Key Learning
+
+* DetailView automatically loads the object using the primary key.
+* No need for `get_object_or_404()`.
+
+---
+
+## CreateView
+
+### Purpose
+
+Create new records.
+
+Example:
+
+```python
+class PatientCreateView(CreateView):
+
+    model = Patient
+
+    fields = [
+        "name",
+        "age",
+        "doctor",
+        "disease"
+    ]
+
+    template_name = "create_patient.html"
+
+    success_url = reverse_lazy("patients")
+```
+
+### Key Learning
+
+* Automatically handles form creation.
+* Automatically validates data.
+* Automatically saves objects.
+
+---
+
+## UpdateView
+
+### Purpose
+
+Update existing records.
+
+Example:
+
+```python
+class PatientUpdateView(UpdateView):
+
+    model = Patient
+
+    fields = [
+        "name",
+        "age",
+        "doctor",
+        "disease"
+    ]
+
+    template_name = "create_patient.html"
+
+    success_url = reverse_lazy("patients")
+```
+
+### Key Learning
+
+* Automatically loads the object.
+* Automatically pre-fills form fields.
+* Equivalent to using:
+
+```python
+instance=patient
+```
+
+inside ModelForms.
+
+---
+
+## DeleteView
+
+### Purpose
+
+Delete existing records.
+
+Example:
+
+```python
+class PatientDeleteView(DeleteView):
+
+    model = Patient
+
+    success_url = reverse_lazy("patients")
+```
+
+### Key Learning
+
+* Automatically handles object retrieval.
+* Uses confirmation page before deletion.
+* Redirects after successful deletion.
+
+---
+
+## reverse_lazy()
+
+Used inside Class-Based Views.
+
+Example:
+
+```python
+success_url = reverse_lazy("patients")
+```
+
+### Purpose
+
+Provides URL resolution for CBVs.
+
+Equivalent FBV concept:
+
+```python
+redirect("patients")
+```
+
+---
+
+## Template Naming Convention
+
+Default CBV template names:
+
+```text
+ListView      → patient_list.html
+DetailView    → patient_detail.html
+CreateView    → patient_form.html
+UpdateView    → patient_form.html
+DeleteView    → patient_confirm_delete.html
+```
+
+Can be overridden using:
+
+```python
+template_name = "custom_template.html"
+```
+
+---
+
+## CRUD Conversion Completed
+
+Converted:
+
+```text
+patient_list()
+create_patient()
+update_patient()
+delete_patient()
+```
+
+into:
+
+```text
+PatientListView
+PatientDetailView
+PatientCreateView
+PatientUpdateView
+PatientDeleteView
+```
+
+---
+
+## Skills Acquired
+
+✅ Class-Based Views
+
+✅ ListView
+
+✅ DetailView
+
+✅ CreateView
+
+✅ UpdateView
+
+✅ DeleteView
+
+✅ as_view()
+
+✅ reverse_lazy()
+
+✅ context_object_name
+
+✅ template_name
+
+✅ Automatic Object Retrieval
+
+✅ Automatic Form Handling
+
+---
+
+## Day 9 Outcome
+
+Successfully converted Hospital Management System CRUD functionality from Function-Based Views to Class-Based Views.
+
+Implemented:
+
+* Patient List Page
+* Patient Detail Page
+* Patient Creation
+* Patient Update
+* Patient Deletion
+
+using Django Generic Class-Based Views with significantly less code while maintaining the same functionality.

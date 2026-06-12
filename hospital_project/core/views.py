@@ -4,6 +4,8 @@ from .models import Patient
 from .forms import PatientForm,RegistrationForm,LoginForm,AuthenticationForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
+from django.urls import reverse_lazy
 
 @login_required
 def home(request):
@@ -21,59 +23,47 @@ def services(request):
 def doctors(request):
     return render(request,'doctors.html')
 
-@login_required
-def patient_list(request):
-    patients=Patient.objects.all()
+class PatientListView(ListView):
+    model=Patient
+    template_name="patient.html"
+    context_object_name="patients"
 
-    return render(request,'patient.html',
-                  {"patients":patients})
+from django.views.generic import DetailView
 
-@login_required
-def create_patient(request):
+class PatientDetailView(DetailView):
 
-    if request.method=="POST":
-        form=PatientForm(request.POST)
+    model = Patient
 
-        if form.is_valid():
-            form.save()
-            return redirect("patient")
-        if not form.is_valid():
-            print(form.errors)
+    template_name = "patient_detail.html"
 
-        
-    else:
-        form=PatientForm()
+    context_object_name = "patient"
 
-    return render(request,
-                  "create_patient.html",
-                  {"form":form})
+class PatientCreateView(CreateView):
+    model=Patient
+    fields=[
+        "name",
+        "age",
+        "doctor",
+        "disease"
+    ]
+    template_name="create_patient.html"
+    success_url=reverse_lazy("patient")
 
-@login_required
-def update_patient(request,id):
-    patient=get_object_or_404(Patient,id=id)
+class PatientUpdateView(UpdateView):
+    model=Patient
+    fields=[
+        "name",
+        "age",
+        "doctor",
+        "disease"
+    ]
+    template_name="create_patient.html"
+    success_url=reverse_lazy("patient")
 
-
-
-    if request.method=="POST":
-        form=PatientForm(request.POST,instance=patient)
-
-        if form.is_valid():
-            form.save()
-
-            return redirect("patient")
-        
-    else:
-        form=PatientForm(instance=patient)
-
-    return render(request,
-                  "create_patient.html",
-                  {"form":form})
-
-@login_required
-def delete_patient(request,id):
-    patient=get_object_or_404(Patient,id=id)
-    patient.delete()
-    return redirect("patient")
+class PatientDeleteView(DeleteView):
+    model=Patient
+    template_name="patient_confirm_delete.html"
+    success_url=reverse_lazy("patient")
 
 
 def register(request):

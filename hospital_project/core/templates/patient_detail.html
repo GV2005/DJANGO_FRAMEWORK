@@ -1,0 +1,13 @@
+<h1>{{ patient.name }}</h1>
+
+<p>Age: {{ patient.age }}</p>
+
+<p>Doctor: {{ patient.doctor }}</p>
+
+<p>
+Diseases:
+
+{% for disease in patient.disease.all %}
+    {{ disease.disease_name }}
+{% endfor %}
+</p>
