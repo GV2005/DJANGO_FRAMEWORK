@@ -6,6 +6,9 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
 from django.urls import reverse_lazy
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import PatientSerializer
 
 @login_required
 def home(request):
@@ -23,6 +26,49 @@ def services(request):
 def doctors(request):
     return render(request,'doctors.html')
 
+#apiview:
+
+class PatientListAPIView(APIView):
+    def get(self,request):
+        patients=Patient.objects.all()
+
+        serializer=PatientSerializer(patients,many=True)
+
+        return Response(serializer.data)
+    
+    def post(self,request):
+        serializer=PatientSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors)
+
+class PatientDetailListAPIView(APIView):
+    def get(self,request,pk):
+        patient=get_object_or_404(Patient,pk=pk)
+
+        serializer=PatientSerializer(patient)
+
+        return Response(serializer.data)
+    
+    def put(self,request,pk):
+        patient=get_object_or_404(Patient,pk=pk)
+        serializer=PatientSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors)
+    
+    def delete(self,request,pk):
+        patient=get_object_or_404(Patient,pk=pk)
+        patient.delete()
+
+        return Response({"message":"Patient deleted successfully"})
+    
 class PatientListView(ListView):
     model=Patient
     template_name="patient.html"

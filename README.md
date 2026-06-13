@@ -2878,3 +2878,434 @@ Implemented:
 * Patient Deletion
 
 using Django Generic Class-Based Views with significantly less code while maintaining the same functionality.
+
+# Day 10 - Django REST Framework (DRF) Basics
+
+## Objective
+
+Learn Django REST Framework and build REST APIs for the Hospital Management System.
+
+The focus of this day was understanding how Django serves JSON data instead of HTML pages and implementing complete CRUD operations through APIs.
+
+---
+
+## Django REST Framework Installation
+
+Installed DRF:
+
+```bash
+pip install djangorestframework
+```
+
+Added to:
+
+```python
+INSTALLED_APPS = [
+    ...
+    "rest_framework",
+]
+```
+
+---
+
+## Serializer
+
+Created a serializer for the Patient model.
+
+```python
+from rest_framework import serializers
+from .models import Patient
+
+class PatientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Patient
+        fields = "__all__"
+```
+
+### Purpose
+
+Serializer converts:
+
+```text
+Model Object
+      ↓
+JSON
+```
+
+and
+
+```text
+JSON
+      ↓
+Model Object
+```
+
+### FastAPI Comparison
+
+```text
+FastAPI
+↓
+Pydantic Model
+
+DRF
+↓
+Serializer
+```
+
+---
+
+## APIView
+
+Created API views using:
+
+```python
+from rest_framework.views import APIView
+```
+
+APIView is used to handle HTTP requests and responses for APIs.
+
+---
+
+## Response Object
+
+Used:
+
+```python
+from rest_framework.response import Response
+```
+
+Example:
+
+```python
+return Response(serializer.data)
+```
+
+### Difference
+
+```text
+Django View
+↓
+render()
+↓
+HTML
+
+DRF APIView
+↓
+Response()
+↓
+JSON
+```
+
+---
+
+## GET All Patients API
+
+Created:
+
+```python
+class PatientListAPIView(APIView):
+
+    def get(self, request):
+
+        patients = Patient.objects.all()
+
+        serializer = PatientSerializer(
+            patients,
+            many=True
+        )
+
+        return Response(serializer.data)
+```
+
+### Endpoint
+
+```http
+GET /api/patients/
+```
+
+### Purpose
+
+Returns all patients as JSON.
+
+---
+
+## GET Single Patient API
+
+Created:
+
+```python
+class PatientDetailAPIView(APIView):
+
+    def get(self, request, pk):
+
+        patient = get_object_or_404(
+            Patient,
+            pk=pk
+        )
+
+        serializer = PatientSerializer(patient)
+
+        return Response(serializer.data)
+```
+
+### Endpoint
+
+```http
+GET /api/patients/<pk>/
+```
+
+### Purpose
+
+Returns a single patient record.
+
+---
+
+## POST API
+
+Added:
+
+```python
+def post(self, request):
+
+    serializer = PatientSerializer(
+        data=request.data
+    )
+
+    if serializer.is_valid():
+
+        serializer.save()
+
+        return Response(serializer.data)
+
+    return Response(serializer.errors)
+```
+
+### Endpoint
+
+```http
+POST /api/patients/
+```
+
+### Purpose
+
+Creates a new patient using JSON data.
+
+Example:
+
+```json
+{
+    "name": "giri",
+    "age": 21,
+    "doctor": 1,
+    "disease": [3]
+}
+```
+
+---
+
+## Serializer Validation
+
+Used:
+
+```python
+serializer.is_valid()
+```
+
+### Example
+
+Invalid request:
+
+```json
+{
+    "name": "test"
+}
+```
+
+Response:
+
+```json
+{
+    "age": [
+        "This field is required."
+    ]
+}
+```
+
+### Key Learning
+
+Serializer automatically validates incoming data before saving.
+
+---
+
+## PUT API
+
+Added:
+
+```python
+def put(self, request, pk):
+
+    patient = get_object_or_404(
+        Patient,
+        pk=pk
+    )
+
+    serializer = PatientSerializer(
+        patient,
+        data=request.data
+    )
+
+    if serializer.is_valid():
+
+        serializer.save()
+
+        return Response(serializer.data)
+
+    return Response(serializer.errors)
+```
+
+### Endpoint
+
+```http
+PUT /api/patients/<pk>/
+```
+
+### Purpose
+
+Updates an existing patient record.
+
+---
+
+## Create vs Update Serializer
+
+### Create
+
+```python
+serializer = PatientSerializer(
+    data=request.data
+)
+```
+
+Purpose:
+
+```text
+Create New Record
+```
+
+---
+
+### Update
+
+```python
+serializer = PatientSerializer(
+    patient,
+    data=request.data
+)
+```
+
+Purpose:
+
+```text
+Update Existing Record
+```
+
+### Key Learning
+
+Providing an existing object switches serializer behavior from create mode to update mode.
+
+---
+
+## DELETE API
+
+Added:
+
+```python
+def delete(self, request, pk):
+
+    patient = get_object_or_404(
+        Patient,
+        pk=pk
+    )
+
+    patient.delete()
+
+    return Response(
+        {
+            "message": "Patient deleted successfully"
+        }
+    )
+```
+
+### Endpoint
+
+```http
+DELETE /api/patients/<pk>/
+```
+
+### Purpose
+
+Deletes a patient record.
+
+---
+
+## REST API Endpoints Built
+
+```http
+GET     /api/patients/
+
+GET     /api/patients/<pk>/
+
+POST    /api/patients/
+
+PUT     /api/patients/<pk>/
+
+DELETE  /api/patients/<pk>/
+```
+
+---
+
+## Skills Acquired
+
+✅ Django REST Framework
+
+✅ Serializer
+
+✅ ModelSerializer
+
+✅ APIView
+
+✅ Response
+
+✅ request.data
+
+✅ GET APIs
+
+✅ POST APIs
+
+✅ PUT APIs
+
+✅ DELETE APIs
+
+✅ Serializer Validation
+
+✅ JSON Request Handling
+
+✅ JSON Response Handling
+
+✅ REST API Design
+
+---
+
+## Day 10 Outcome
+
+Successfully built a complete REST CRUD API for the Hospital Management System using Django REST Framework.
+
+Implemented:
+
+* Get All Patients API
+* Get Single Patient API
+* Create Patient API
+* Update Patient API
+* Delete Patient API
+
+and gained practical understanding of serializers, APIViews, validation, and JSON-based communication.
