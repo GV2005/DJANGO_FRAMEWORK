@@ -8,6 +8,9 @@ from django.views.generic import ListView,CreateView,UpdateView,DeleteView,Detai
 from django.urls import reverse_lazy
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 from .serializers import PatientSerializer
 
 @login_required
@@ -26,8 +29,8 @@ def services(request):
 def doctors(request):
     return render(request,'doctors.html')
 
-#apiview:
 
+#apiview
 class PatientListAPIView(APIView):
     def get(self,request):
         patients=Patient.objects.all()
@@ -44,6 +47,7 @@ class PatientListAPIView(APIView):
             return Response(serializer.data)
         
         return Response(serializer.errors)
+
 
 class PatientDetailListAPIView(APIView):
     def get(self,request,pk):
@@ -111,6 +115,24 @@ class PatientDeleteView(DeleteView):
     template_name="patient_confirm_delete.html"
     success_url=reverse_lazy("patient")
 
+#Genericapiview:
+
+class PatientListCreateAPIView(ListCreateAPIView):
+    queryset=Patient.objects.all()
+    serializer_class=PatientSerializer
+
+class PatientRetriveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset=Patient.objects.all()
+    serializer_class=PatientSerializer
+
+#viewsets
+
+class PatientViewSet(ModelViewSet):
+    queryset=Patient.objects.all()
+    serializer_class=PatientSerializer
+    permission_classes=[
+        IsAuthenticated
+    ]
 
 def register(request):
     if request.method=="POST":
