@@ -1,3 +1,216 @@
+# 🏥 Hospital Management System
+
+A full-stack Hospital Management System built using Django and Django REST Framework. The project enables management of patients, doctors, diseases, appointments, and patient profiles through both a web interface and REST APIs.
+
+## 🚀 Live Demo
+
+**Live URL:** https://django-framework-dmg2.onrender.com/
+
+## ✨ Features
+
+### Authentication
+
+* User Registration
+* User Login
+* User Logout
+* Protected Routes
+* Permission-Based API Access
+
+### Patient Management
+
+* Create Patient
+* View Patient Details
+* Update Patient
+* Delete Patient
+
+### Appointment Management
+
+* Book Appointment
+* View Appointment Details
+* Update Appointment
+* Delete Appointment
+
+### Doctor Management
+
+* Create Doctors
+* View Doctors
+* Admin Management
+
+### Disease Management
+
+* Create Diseases
+* View Diseases
+* Admin Management
+
+### Patient Profiles
+
+* One-to-One Patient Profile System
+* Blood Group Information
+* Emergency Contact Details
+
+### Django Admin
+
+* Manage Patients
+* Manage Doctors
+* Manage Diseases
+* Manage Appointments
+* Manage Users
+
+### REST APIs
+
+* Patient APIs
+* Appointment APIs
+* Django REST Framework
+* ModelViewSet
+* Routers
+* Permissions
+
+---
+
+## 🛠️ Technologies Used
+
+### Backend
+
+* Python
+* Django
+* Django REST Framework
+
+### Database
+
+* SQLite
+
+### Frontend
+
+* HTML
+* Bootstrap 5
+
+### Deployment
+
+* Render
+
+### Server
+
+* Gunicorn
+* WhiteNoise
+
+---
+
+## 📚 Django Concepts Implemented
+
+* Models
+* Django ORM
+* Forms
+* Validation
+* Authentication
+* Authorization
+* CRUD Operations
+* Django Admin
+* Class-Based Views
+* Django REST Framework
+* Serializers
+* APIView
+* GenericAPIView
+* ModelViewSet
+* Routers
+* Permissions
+
+---
+
+## 🔗 Relationships Used
+
+### ForeignKey
+
+* Patient → Doctor
+* Appointment → Patient
+* Appointment → Doctor
+
+### OneToOne
+
+* Patient → Patient Profile
+
+### ManyToMany
+
+* Patient → Disease
+
+---
+
+## 📂 Project Structure
+
+```text
+hospital_project/
+│
+├── core/
+│   ├── models.py
+│   ├── views.py
+│   ├── forms.py
+│   ├── serializers.py
+│   ├── admin.py
+│   └── templates/
+│
+├── hospital_project/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── manage.py
+└── db.sqlite3
+```
+
+---
+
+## ⚙️ Installation
+
+```bash
+git clone <repository-url>
+
+cd hospital_project
+
+pip install -r requirements.txt
+
+python manage.py migrate
+
+python manage.py runserver
+```
+
+---
+
+## 🌐 API Endpoints
+
+### Patients
+
+```text
+/api/patients/
+```
+
+### Appointments
+
+```text
+/ api/appointments/
+```
+
+---
+
+## 🎯 Learning Outcome
+
+This project was developed as part of a 14-Day Django Learning Roadmap and demonstrates practical backend development skills including:
+
+* Django Development
+* REST API Development
+* Database Design
+* Authentication Systems
+* CRUD Operations
+* Deployment
+* Debugging and Problem Solving
+
+---
+
+## 👨‍💻 Author
+
+**Giri Venkatesh**
+
+Python Backend Developer | Django Developer
+
+
 # Django Learning Journey - Day 1
 
 ## Objective
@@ -4119,3 +4332,4 @@ Modules:
 Deployment Target:
 
 Render
+
