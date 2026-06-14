@@ -3309,3 +3309,813 @@ Implemented:
 * Delete Patient API
 
 and gained practical understanding of serializers, APIViews, validation, and JSON-based communication.
+
+# Day 11 - Advanced Django REST Framework
+
+## Objective
+
+Learn advanced Django REST Framework features that reduce boilerplate code and simplify API development.
+
+The focus of this day was moving from APIView to Generic Views, ViewSets, Routers, Authentication, and Permissions.
+
+---
+
+## Generic Views
+
+### Concept
+
+Generic Views automate common CRUD operations.
+
+Relationship:
+
+```text
+APIView
+    ↓
+GenericAPIView
+```
+
+Less code while maintaining the same functionality.
+
+---
+
+## ListCreateAPIView
+
+Replaced manual GET and POST implementations.
+
+### Example
+
+```python
+from rest_framework.generics import ListCreateAPIView
+
+class PatientListCreateAPIView(
+    ListCreateAPIView
+):
+
+    queryset = Patient.objects.all()
+
+    serializer_class = PatientSerializer
+```
+
+### Automatically Provides
+
+```text
+GET    /patients/
+POST   /patients/
+```
+
+### Key Learning
+
+```python
+queryset = Patient.objects.all()
+```
+
+replaces:
+
+```python
+patients = Patient.objects.all()
+```
+
+and
+
+```python
+serializer_class = PatientSerializer
+```
+
+allows DRF to automatically create serializers and responses.
+
+---
+
+## RetrieveUpdateDestroyAPIView
+
+Replaced manual GET, PUT, and DELETE implementations.
+
+### Example
+
+```python
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView
+)
+
+class PatientRetrieveUpdateDestroyAPIView(
+    RetrieveUpdateDestroyAPIView
+):
+
+    queryset = Patient.objects.all()
+
+    serializer_class = PatientSerializer
+```
+
+### Automatically Provides
+
+```text
+GET
+PUT
+DELETE
+```
+
+for individual records.
+
+### Endpoint Example
+
+```http
+/api/patients/<pk>/
+```
+
+---
+
+## Generic Views vs APIView
+
+### APIView
+
+Required manually writing:
+
+```python
+get()
+post()
+put()
+delete()
+```
+
+### Generic Views
+
+Required only:
+
+```python
+queryset
+serializer_class
+```
+
+DRF automatically generated the CRUD behavior.
+
+---
+
+## ModelViewSet
+
+### Purpose
+
+Combine all CRUD operations into a single class.
+
+### Example
+
+```python
+from rest_framework.viewsets import ModelViewSet
+
+class PatientViewSet(
+    ModelViewSet
+):
+
+    queryset = Patient.objects.all()
+
+    serializer_class = PatientSerializer
+```
+
+### Automatically Provides
+
+```text
+GET List
+GET Detail
+POST
+PUT
+PATCH
+DELETE
+```
+
+### Key Learning
+
+One ViewSet can replace multiple API views.
+
+---
+
+## Routers
+
+### Purpose
+
+Automatically generate URL patterns.
+
+### Example
+
+```python
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register(
+    "patients",
+    PatientViewSet
+)
+```
+
+### URL Registration
+
+```python
+from django.urls import include
+
+urlpatterns = [
+    path(
+        "api/",
+        include(router.urls)
+    )
+]
+```
+
+### Automatically Generated URLs
+
+```text
+/api/patients/
+/api/patients/1/
+/api/patients/2/
+```
+
+### Key Learning
+
+Manual URL creation becomes unnecessary.
+
+---
+
+## API Evolution Learned
+
+### Stage 1
+
+```python
+APIView
+```
+
+Manual CRUD implementation.
+
+---
+
+### Stage 2
+
+```python
+ListCreateAPIView
+
+RetrieveUpdateDestroyAPIView
+```
+
+Automatic CRUD behavior.
+
+---
+
+### Stage 3
+
+```python
+ModelViewSet
+```
+
+Single class for all CRUD operations.
+
+---
+
+### Stage 4
+
+```python
+DefaultRouter
+```
+
+Automatic URL generation.
+
+---
+
+## Authentication
+
+### IsAuthenticated
+
+```python
+from rest_framework.permissions import (
+    IsAuthenticated
+)
+
+permission_classes = [
+    IsAuthenticated
+]
+```
+
+### Behavior
+
+```text
+Authenticated User
+    ↓
+Access Allowed
+
+Anonymous User
+    ↓
+Access Denied
+```
+
+### Verification
+
+Successfully tested API protection.
+
+---
+
+## Permissions
+
+### IsAuthenticatedOrReadOnly
+
+```python
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly
+)
+
+permission_classes = [
+    IsAuthenticatedOrReadOnly
+]
+```
+
+### Behavior
+
+```text
+GET
+↓
+Allowed For Everyone
+
+POST
+PUT
+DELETE
+↓
+Authenticated Users Only
+```
+
+### Verification
+
+Successfully tested permission behavior.
+
+---
+
+## DRF Permission Classes Learned
+
+### IsAuthenticated
+
+```text
+Logged-in users only
+```
+
+---
+
+### IsAuthenticatedOrReadOnly
+
+```text
+Public Read Access
+Authenticated Write Access
+```
+
+---
+
+### IsAdminUser
+
+Learned conceptually:
+
+```text
+Admin users only
+```
+
+---
+
+## Skills Acquired
+
+✅ GenericAPIView
+
+✅ ListCreateAPIView
+
+✅ RetrieveUpdateDestroyAPIView
+
+✅ ModelViewSet
+
+✅ DefaultRouter
+
+✅ Automatic URL Generation
+
+✅ API Abstraction Layers
+
+✅ Authentication
+
+✅ Permission Classes
+
+✅ IsAuthenticated
+
+✅ IsAuthenticatedOrReadOnly
+
+✅ Protected APIs
+
+✅ REST API Best Practices
+
+---
+
+## Day 11 Outcome
+
+Successfully upgraded DRF APIs from manual APIView implementations to Generic Views, ViewSets, and Routers.
+
+Implemented:
+
+* ListCreateAPIView
+* RetrieveUpdateDestroyAPIView
+* ModelViewSet
+* DefaultRouter
+* Authentication
+* Permissions
+
+and gained practical understanding of how DRF automates CRUD API development while maintaining security through authentication and permission systems.
+
+# Day 12 - Healthcare Management Project
+
+## Objective
+
+Build a complete Hospital Management System by integrating all previously learned Django concepts into a real-world project.
+
+---
+
+## Models Used
+
+### Patient
+
+```text
+Name
+Age
+Doctor
+Diseases
+```
+
+### Doctor
+
+```text
+Name
+Age
+Department
+```
+
+### Disease
+
+```text
+Disease Name
+```
+
+### Patient Profile
+
+```text
+Patient
+Address
+Phone Number
+Blood Group
+```
+
+### Appointment
+
+```text
+Patient
+Doctor
+Appointment Date
+Appointment Time
+Reason
+```
+
+---
+
+## Relationships Implemented
+
+### ForeignKey
+
+```text
+Patient → Doctor
+Appointment → Patient
+Appointment → Doctor
+```
+
+### OneToOne
+
+```text
+Patient → Patient Profile
+```
+
+### ManyToMany
+
+```text
+Patient → Disease
+```
+
+---
+
+## Appointment Management System
+
+Created a complete Appointment Management module.
+
+### Features
+
+* Create Appointment
+* View Appointment
+* Update Appointment
+* Delete Appointment
+
+### Fields
+
+```text
+Patient
+Doctor
+Appointment Date
+Appointment Time
+Reason
+```
+
+---
+
+## Frontend Features
+
+Implemented:
+
+```text
+Patient CRUD
+Appointment CRUD
+Authentication System
+Navigation Bar
+Bootstrap Styling
+Responsive Tables
+Bootstrap Forms
+```
+
+---
+
+## Backend Features
+
+Implemented:
+
+```text
+Models
+ORM
+Relationships
+Forms
+Validation
+Authentication
+Authorization
+Admin Panel
+Class-Based Views
+REST APIs
+```
+
+---
+
+## Day 12 Outcome
+
+Successfully completed the Healthcare Management System by integrating Patients, Doctors, Diseases, Profiles, and Appointments into a single working application.
+
+# Day 13 - Project Completion
+
+## Objective
+
+Complete and polish the Hospital Management System project.
+
+---
+
+## CRUD Functionality
+
+### Patient
+
+```text
+Create  ✅
+Read    ✅
+Update  ✅
+Delete  ✅
+```
+
+### Appointment
+
+```text
+Create  ✅
+Read    ✅
+Update  ✅
+Delete  ✅
+```
+
+### Doctor
+
+```text
+Create  ✅
+Read    ✅
+(Admin Managed)
+```
+
+### Disease
+
+```text
+Create  ✅
+Read    ✅
+(Admin Managed)
+```
+
+---
+
+## Django Admin
+
+Configured and tested:
+
+```text
+Patients
+Doctors
+Diseases
+Patient Profiles
+Appointments
+Users
+```
+
+Successfully performed:
+
+```text
+Create
+Update
+Delete
+```
+
+operations through Django Admin.
+
+---
+
+## REST APIs
+
+### Patient API
+
+Implemented using:
+
+```text
+Serializer
+APIView
+GenericAPIView
+ModelViewSet
+Router
+```
+
+### Appointment API
+
+Implemented using:
+
+```text
+Serializer
+ModelViewSet
+Router
+```
+
+---
+
+## Authentication & Permissions
+
+Implemented:
+
+```text
+User Registration
+Login
+Logout
+IsAuthenticated
+IsAuthenticatedOrReadOnly
+```
+
+---
+
+## UI Improvements
+
+Added:
+
+```text
+Bootstrap Navbar
+Bootstrap Tables
+Bootstrap Forms
+Dashboard Statistics
+Responsive Layout
+```
+
+---
+
+## Project Testing
+
+Verified:
+
+```text
+Authentication         ✅
+Patient CRUD           ✅
+Appointment CRUD       ✅
+Relationships          ✅
+Admin Panel            ✅
+Patient API            ✅
+Appointment API        ✅
+Permissions            ✅
+```
+
+---
+
+## Deployment Preparation
+
+Prepared project for deployment using:
+
+```text
+Render
+```
+
+Deployment files:
+
+```text
+requirements.txt
+GitHub Repository
+Django Project
+```
+
+---
+
+## Final Project Outcome
+
+Built a complete Hospital Management System featuring:
+
+* Authentication
+* Patients
+* Doctors
+* Diseases
+* Patient Profiles
+* Appointments
+* Admin Management
+* REST APIs
+* ViewSets
+* Routers
+* Permissions
+
+This project demonstrates practical Django backend development skills and serves as a portfolio-ready project for Python Backend Developer and Django Developer roles.
+
+# Django Roadmap Progress
+
+✅ Day 1 - Django Foundation
+
+✅ Day 2 - URLs and Views
+
+✅ Day 3 - Models and ORM
+
+✅ Day 4 - Django Admin
+
+✅ Day 5 - CRUD Operations
+
+✅ Day 6 - Forms and Validation
+
+✅ Day 7 - Authentication
+
+✅ Day 8 - Relationships
+
+✅ Day 9 - Class-Based Views
+
+✅ Day 10 - Django REST Framework
+
+✅ Day 11 - Advanced DRF
+
+✅ Day 12 - Healthcare Management Project
+
+✅ Day 13 - Project Completion
+
+⏳ Day 14 - Deployment and Interview Preparation (In Progress)
+
+---
+
+## Roadmap Status
+
+```text
+Completed: 13 / 14 Days
+```
+
+---
+
+## Final Skills Acquired
+
+```text
+Django
+Django ORM
+Authentication
+Authorization
+Forms
+Validation
+Admin Panel
+CRUD Operations
+ForeignKey
+OneToOne
+ManyToMany
+Class-Based Views
+Django REST Framework
+APIView
+GenericAPIView
+ViewSets
+Routers
+Permissions
+Bootstrap Integration
+Project Deployment
+```
+
+---
+
+## Final Project
+
+Hospital Management System
+
+Modules:
+
+* Patients
+* Doctors
+* Diseases
+* Patient Profiles
+* Appointments
+* Authentication
+* Admin Panel
+* REST APIs
+
+Deployment Target:
+
+Render

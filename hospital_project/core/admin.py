@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Patient,Doctor,PatientProfile,Disease
+from .models import Patient,Doctor,PatientProfile,Disease,Appointment
 
 
 @admin.register(Doctor)
@@ -64,4 +64,22 @@ class PatientProfileAdmin(admin.ModelAdmin):
         "patient",
         "blood_group"
         
+    )
+
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
+    list_display=[
+        "patient",
+        "doctor",
+        "appointment_date",
+        "appointment_time",
+        "reason"
+    ]
+    search_fields=(
+        "patient",
+        "doctor",
+    )
+
+    list_filter=(
+        "appointment_date",
     )

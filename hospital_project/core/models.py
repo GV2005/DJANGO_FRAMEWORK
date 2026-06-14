@@ -45,3 +45,20 @@ class PatientProfile(models.Model):
     blood_group=models.CharField(max_length=5)
     emergency_contact=models.IntegerField()
 
+#Appointment model
+class Appointment(models.Model):
+    patient=models.ForeignKey(Patient,
+                              on_delete=models.CASCADE)
+    
+    doctor=models.ForeignKey(Doctor,
+                              on_delete=models.CASCADE)
+    
+    appointment_date=models.DateField()
+    appointment_time=models.TimeField()
+    reason=models.TextField()
+
+    def __str__(self):
+        return (
+            f"{self.patient} -"
+            f"{self.doctor}"
+        )

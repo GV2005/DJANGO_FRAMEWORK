@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="card shadow p-4">
-<h2>Add Patient</h2>
+<h2>Book Appointment</h2>
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save Patient</button>
+    <button type="submit" class="btn btn-primary">Book appointment</button>
 </form>
 </div>
 {% endblock %}

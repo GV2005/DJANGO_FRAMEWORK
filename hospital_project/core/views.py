@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Patient
+from .models import Patient,Appointment
 from .forms import PatientForm,RegistrationForm,LoginForm,AuthenticationForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -10,8 +10,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated
-from .serializers import PatientSerializer
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
+from .serializers import PatientSerializer,AppointmentSerializer
 
 @login_required
 def home(request):
@@ -167,3 +167,51 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect("login")
+
+#Appointment CBviews:
+
+class AppointmentListView(ListView):
+    model=Appointment
+    template_name="appointments.html"
+    context_object_name="appointments"
+
+class AppointmentDetailView(DetailView):
+    model=Appointment
+    template_name="appointment_detail.html"
+    context_object_name="appointment"
+
+class AppointmentCreateView(CreateView):
+    model=Appointment
+    fields=[
+            "patient",
+            "doctor",
+            "appointment_date",
+            "appointment_time",
+            "reason"
+        ]
+    template_name="appointment_create.html"
+    success_url=reverse_lazy("appointments")
+
+class AppointmentUpdateView(UpdateView):
+    model=Appointment
+    fields=[
+            "patient",
+            "doctor",
+            "appointment_date",
+            "appointment_time",
+            "reason"
+        ]
+    template_name="appointment_create.html"
+    success_url=reverse_lazy("appointments")
+
+class AppointmentDeleteView(DeleteView):
+    model=Appointment
+    template_name="appointment_delete.html"
+    success_url=reverse_lazy("appointments")
+
+class AppointmentViewSet(ModelViewSet):
+    queryset=Appointment.objects.all()
+    serializer_class=AppointmentSerializer
+    permission_classes=[
+        IsAuthenticatedOrReadOnly
+    ]

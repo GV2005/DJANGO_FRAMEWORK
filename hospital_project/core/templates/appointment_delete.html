@@ -1,6 +1,6 @@
 <div class="card shadow p-4">
 <h2>
-    Delete {{ object.name }}?
+    Delete {{ object.patient }}?
 </h2>
 
 <form method="POST">
@@ -10,7 +10,7 @@
     </button>
 </form>
 
-<a href="{% url 'patient' %}">
+<a href="{% url 'appointments' %}">
     Cancel
 </a>
 </div>
